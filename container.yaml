@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      volumes:
+      - name: pvc1
+        persistentVolumeClaim:
+          claimName: test
+      initContainers:
+        - name: echo
+          env:
+          - name: test
+            value: testValue
+          - name: port
+            value: "8080" 
+          image: busybox
+          command:
+          - sh
+          - -c
+          - echo $port
+        - name: sleep
+          image: busybox
+          command: ["sh", "-c", "sleep 1"]
+      containers:
+        - name: demo
+          image: adikarthik/demo
+          ports:
+            - containerPort: 9090
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "500m"
+            limits:
+              memory: "600Mi"
+              cpu: "800m"
+          readinessProbe:
+            tcpSocket:
+              port: 9090
+            periodSeconds: 50
+            initialDelaySeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /demo1/api/v1/projects
+              port: 9090
+            periodSeconds: 100
+            failureThreshold: 3

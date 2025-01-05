@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: test
+spec:
+  capacity:
+    storage: 10Gi
+  hostPath:
+    path: "/home/minikube/volume"
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: manual
+

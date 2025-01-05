@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: demo
+  name: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      initContainers:
+      - name: touch
+        image: busybox
+        command: ["sh", "-c", "touch abc"]
+      - name: echo
+        image: busybox
+        command: ["sh", "-c", "echo roshan"]
+      - name: dirmk
+        image: busybox
+        command: ["sh", "-c", "mkdir test"]
+      containers:
+        - name: demo
+          image: adikarthik/demo
+          ports:
+            - containerPort: 9090
+          resources: {}
+status: {}
